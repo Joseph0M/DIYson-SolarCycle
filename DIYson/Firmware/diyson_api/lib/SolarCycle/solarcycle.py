@@ -89,7 +89,6 @@ class Solar:
     
     def cct(self):
         sr,ss = self.sunrise_sunset()
-        print(sr,ss)
         a1,b1,a2,b2,a3,b3 = sr,min(self.get_LED_Values('max_CCT'),max(self.get_LED_Values('min_CCT'),self.get_LED_Values('sunrise_CCT'))),12,min(self.get_LED_Values('max_CCT'),max(self.get_LED_Values('min_CCT'),self.get_LED_Values('noon_CCT'))),ss,min(self.get_LED_Values('max_CCT'),max(self.get_LED_Values('min_CCT'),self.get_LED_Values('sunset_CCT')))
         hours,mins,secs = self.time()
         x = hours+(mins/60)+(secs/3600)
@@ -107,4 +106,4 @@ def example_code():
     print(f"Sunlight Intensity: {solar.solar_insolation()}%")
     print(f"CCT: {solar.cct()}K")
     print(f"Age Intensity Multiplier: {solar.age_intensity_multiplier(50)}")
-example_code()
+#example_code()
