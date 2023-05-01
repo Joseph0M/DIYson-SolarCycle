@@ -1,5 +1,5 @@
 # DIYson-SolarCycle
-Software that adds support for solar tracking to the DIYson Lamp
+Firmware that adds support for solar tracking, WiFi Comaptibility and other Smart fetures to Steven Bennett's DIYson Lamp Project
 
 # Solar Tracking with the DIYson	
 	
@@ -42,3 +42,10 @@ The algorithm takes into account the *Solar Constant* (1364 W/m^2), the *relativ
 ### Final Thoughts	
 	
 Along with these features, values are always checked for violations of LED specs and user settings before being returned. As this algorithm is contained in a class, it can be imported or integrated into existing scripts fairly easily. This fork currently does not contain DIYson Express files or 3D parts for simplicity.
+
+
+# WiFi Compatibility
+
+the Latest commit includes Major changes and additions to Firmware. This is to support the addition of a locally hosted API for the Lamp.
+
+Documentation will follow soon.
