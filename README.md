@@ -46,6 +46,34 @@ Along with these features, values are always checked for violations of LED specs
 
 # WiFi Compatibility
 
-the Latest commit includes Major changes and additions to Firmware. This is to support the addition of a locally hosted API for the Lamp.
+the Latest commit includes Major changes and additions to Firmware. This is to support the addition of a locally hosted API for the Lamp. The firmware does not support manual inputs (buttons ect) at the moment.
 
 Documentation will follow soon.
+
+## How to use the API
+
+* Make sure you are running Python 3.11 or Higher
+* Type the following into Terminal/CMD Line
+    * pip install fastapi
+    * pip install "uvicorn[standard]"
+    * pip install pydantic
+* Navigate to DIYson/Firmware/diyson_api/lib/config.json
+* Change the IP address under SERVER_DATA to the IP address of your device
+* Run Main.py at DIYson/Firmware/main.py
+* In your browser enter your IP address and Port.
+    * It should look a bit like this: 127.0.0.1:8005/docs
+* Authorize your browser by clicking "Authorize" at the top right
+    * the defult Username is "app" and the Password is "test"
+
+You can now play around with the API, it should display all the avalible Endpoints.
+
+**Modifing the config.json and Hardware.py files are a MUST**. The values and code depend on your hardware and configuration.
+
+If you want to use the SolarCycle module on its own, you can import it from DIYson/Firmware/diyson_api/lib/SolarCycle/solarcycle.py
+
+### To-do list:
+* Auto Mode (Graph Peak detection)
+* Full config.json support
+* Easier to operate UI
+* Manual input support
+* a full Firmware Build
