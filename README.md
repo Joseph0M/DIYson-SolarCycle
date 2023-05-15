@@ -80,20 +80,297 @@ If you want to use the SolarCycle module on its own, you can import it from DIYs
 
 # API Documentation
 
+
+## /v1/users
+
+### **/v1/users/token/**
+*login_for_access_token*
+
+     Authorisation = False
+     Method = Post
+     Response = {"access_token": str,"token_type":"bearer"} -> json
+     
+**Application:**
+```
+import requests
+form_data = {
+  "username": "app",
+  "password": "test"
+}
+url = "http://127.0.0.1:8005/v1/users/token"
+response = requests.post(url,data=form_data)
+token = response.json()['access_token']
+```
 ### **/v1/users/get_user/**
 
 *get_logged_in_user*
 
      Authorisation = True
+     Method = Get
+     Response = {'username': str, 'full_name': str, 'disabled': Bool} -> json
+
+**Application:**
+```
+import requests
+headers = {
+    'Content-Type': 'application/json',
+  'Authorization': 'Bearer ' + token,
+} 
+url = "http://127.0.0.1:8005/v1/users/get_user"
+response = requests.get(url, headers=headers)
+print(response.json())
+```
+
+### **/v1/users/disable_user/**
+
+*delete_user*
+
+     Authorisation = True
+     Method = Delete
+     Response = {'username': str, 'full_name': str, 'disabled': Bool} -> json
+
+**Application:**
+```
+import requests
+headers = {
+    'Content-Type': 'application/json',
+  'Authorization': 'Bearer ' + token,
+} 
+url = "http://127.0.0.1:8005/v1/users/disable_user"
+response = requests.delete(url, headers=headers)
+print(response.json())
+```
+
+##/v1/state
+
+### **/v1/state/set_state/**
+
+*set_lamp_status*
+
+     Authorisation = True
      Method = Post
-     Response = json -> str
+     Response = {'status': str, 'user': str} -> json
+     Valid Data = "IDLE","READY","BUSY"
 
-**Example:**
-requests.post(
+**Application:**
+```
+import requests
+headers = {
+    'Content-Type': 'application/json',
+  'Authorization': 'Bearer ' + token,
+} 
+url = "http://127.0.0.1:8005/v1/state/set_state/?"+state
+response = requests.post(url, headers=headers)
+print(response.json())
+```
 
-### **/v1/users/token/**
+### **/v1/state/get_state/**
 
-*login_for_access_token*
+*get_lamp_status*
 
-     Authorisation = False
-     Response = 0Auth2 Bearer Token -> str
+     Authorisation = True
+     Method = Get
+     Response = {'status': str, 'user': str} -> json
+
+**Application:**
+```
+import requests
+headers = {
+    'Content-Type': 'application/json',
+  'Authorization': 'Bearer ' + token,
+} 
+url = "http://127.0.0.1:8005/v1/state/get_state/"
+response = requests.get(url, headers=headers)
+print(response.json())
+```
+
+## /v1/data
+
+### **/v1/data/generate_cct/**
+
+*generate_cct_value*
+
+     Authorisation = True
+     Method = Get
+     Response = {'CCT VALUE': float, 'user': str} -> json
+
+**Application:**
+```
+import requests
+headers = {
+    'Content-Type': 'application/json',
+  'Authorization': 'Bearer ' + token,
+} 
+url = "http://127.0.0.1:8005/v1/data/generate_cct/"
+response = requests.get(url, headers=headers)
+print(response.json())
+```
+
+### **/v1/data/generate_intensity/**
+
+*generate_intensity*
+
+     Authorisation = True
+     Method = Get
+     Response = {'INTENSITY VALUE': float, 'user': str} -> json
+
+**Application:**
+```
+import requests
+headers = {
+    'Content-Type': 'application/json',
+  'Authorization': 'Bearer ' + token,
+} 
+url = "http://127.0.0.1:8005/v1/data/generate_intensity/"
+response = requests.get(url, headers=headers)
+print(response.json())
+```
+
+### **/v1/data/get_aim/**
+
+*get_age_intensity_multiplier*
+
+     Authorisation = True
+     Method = Get
+     Response = {'AIM': float, 'user': str} -> json
+
+**Application:**
+```
+import requests
+headers = {
+    'Content-Type': 'application/json',
+  'Authorization': 'Bearer ' + token,
+} 
+url = "http://127.0.0.1:8005/v1/data/get_aim/"
+response = requests.get(url, headers=headers)
+print(response.json())
+```
+
+### **/v1/data/get_sss_sr/**
+
+*get_sunrise_and_sunset*
+
+     Authorisation = True
+     Method = Get
+     Response = {'SUNRISE': float, "SUNSET": float, 'user': str} -> json
+
+**Application:**
+```
+import requests
+headers = {
+    'Content-Type': 'application/json',
+  'Authorization': 'Bearer ' + token,
+} 
+url = "http://127.0.0.1:8005/v1/data/get_sss_sr/"
+response = requests.get(url, headers=headers)
+print(response.json())
+```
+
+### **/v1/data/get_config/**
+
+*get_config*
+
+     Authorisation = True
+     Method = Get
+     Response = {'CONFIG': {json}, 'user': str} -> json
+
+**Application:**
+```
+import requests
+headers = {
+    'Content-Type': 'application/json',
+  'Authorization': 'Bearer ' + token,
+} 
+url = "http://127.0.0.1:8005/v1/data/get_config/"
+response = requests.get(url, headers=headers)
+print(response.json())
+```
+
+## /v1/lamp
+
+### **/v1/lamp/set_bri/**
+
+*set_lamp_brightness*
+
+     Authorisation = True
+     Method = Post
+     Response = {'CONFIG': {json}, 'user': str} -> json
+     Parameters = {
+     	bri: int = 100,
+	incriment: int = 1
+	}
+	
+**Application:**
+```
+import requests
+headers = {
+    'Content-Type': 'application/json',
+  'Authorization': 'Bearer ' + token,
+} 
+url = "http://127.0.0.1:8005/v1/lamp/set_bri/?bri="+str(brightness)+"&incriment="+str(incriment)
+response = requests.post(url, headers=headers)
+print(response.json())
+```
+
+### **/v1/lamp/get_intensity/**
+
+*get_intensity*
+
+     Authorisation = True
+     Method = Get
+     Response = {'INTENSITY': {json}, 'user': str} -> json
+
+**Application:**
+```
+import requests
+headers = {
+    'Content-Type': 'application/json',
+  'Authorization': 'Bearer ' + token,
+} 
+url = "http://127.0.0.1:8005/v1/lamp/get_intensity/"
+response = requests.get(url, headers=headers)
+print(response.json())
+```
+
+### **/v1/lamp/get_distance/**
+
+*get_intensity*
+
+     Authorisation = True
+     Method = Get
+     Response = {'DISTANCE': float,'PROXIMITY': float, 'user': str} -> json
+     Parameters = {
+     	range: int = 1,2 or 3
+	}
+
+**Application:**
+```
+import requests
+headers = {
+    'Content-Type': 'application/json',
+  'Authorization': 'Bearer ' + token,
+} 
+url = "http://127.0.0.1:8005/v1/lamp/get_distance/?range="+str(range)
+response = requests.post(url, headers=headers)
+print(response.json())
+```
+
+### **/v1/lamp/get_ambient_light/**
+
+*get_ambient_light*
+
+     Authorisation = True
+     Method = Get
+     Response = {'AMBIENT_LIGHT': float, 'user': str} -> json
+
+**Application:**
+```
+import requests
+headers = {
+    'Content-Type': 'application/json',
+  'Authorization': 'Bearer ' + token,
+} 
+url = "http://127.0.0.1:8005/v1/lamp/get_ambient_light/"
+response = requests.post(url, headers=headers)
+print(response.json())
+```
