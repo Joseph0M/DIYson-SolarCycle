@@ -93,8 +93,7 @@ class Solar:
         hours,mins,secs = self.time()
         x = hours+(mins/60)+(secs/3600)
         cct = (b1*(((x-a2)*(x-a3))/((a1-a2)*(a1-a3))))+(b2*(((x-a1)*(x-a3))/((a2-a1)*(a2-a3))))+(b3*(((x-a1)*(x-a2))/((a3-a1)*(a3-a2))))
-        return int(max(self.get_LED_Values('min_CCT'),min(cct,self.get_LED_Values('max_CCT'))))
-    
+        return int(max(self.get_LED_Values('min_CCT'),min(cct,self.get_LED_Values('max_CCT')))) #Kelvin
     def age_intensity_multiplier(self,age):
         return max(1,((1/382.5)*(min(age,100)**2))-1.4) #multiply by the intensity to get the correct value (percentage)
 
