@@ -22,10 +22,8 @@ SOFTWARE.
 """
 
 from fastapi import APIRouter
-from ..src.endpoints.v1 import security, data, lamp
+from ..src.endpoints import v1
 
 router = APIRouter()
-#v1 
-router.include_router(security.router)
-router.include_router(data.router)
-router.include_router(lamp.router)
+router.include_router(v1.router)
+#router.include_router(v2.router)
