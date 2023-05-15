@@ -77,3 +77,23 @@ If you want to use the SolarCycle module on its own, you can import it from DIYs
 * Easier to operate UI
 * Manual input support
 * a full Firmware Build
+
+# API Documentation
+
+### **/v1/users/get_user/**
+
+*get_logged_in_user*
+
+     Authorisation = True
+     Method = Post
+     Response = json -> str
+
+**Example:**
+requests.post(
+
+### **/v1/users/token/**
+
+*login_for_access_token*
+
+     Authorisation = False
+     Response = 0Auth2 Bearer Token -> str
