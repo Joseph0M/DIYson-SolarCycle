@@ -106,9 +106,9 @@ class Sensor():
     
 class HW():
     def __init__(self) -> None:
-        from machine import Pin, PWM, I2C
-        self.PWM = PWM
-        self.Pin = Pin
+        #from machine import Pin, PWM, I2C
+        #self.PWM = PWM
+        #self.Pin = Pin
 
         self.pwm_freq = 1000
 

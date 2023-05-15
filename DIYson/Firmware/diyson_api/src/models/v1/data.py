@@ -25,7 +25,7 @@ from pydantic import BaseModel, Field
 from typing import Optional
 
 class lampData(BaseModel):
-    status: str | None = None
+    status: str = "IDLE"
     intensity: int
     cct: int
     distance: int

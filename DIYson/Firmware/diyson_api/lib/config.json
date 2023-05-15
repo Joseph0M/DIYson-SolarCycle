@@ -1,20 +1,23 @@
 {
     "LED_DATA" :{
         "CCT": {
-            "min_CCT": 1800,
-            "max_CCT": 6500
+            "MIN_CCT": 1800,
+            "MAX_CCT": 6500,
+            "NCCT": 6500,
+            "SRCCT": 2000,
+            "SSCCT": 2000
         },
 
         "BRIGHTNESS": {
-            "min_BRT": 0,
-            "max_BRT": 100,
+            "MIN_BRI": 0,
+            "MAX_BRI": 100,
 
-            "min_lux": 0,
-            "max_lux": 500
+            "MIN_lux": 0,
+            "MAX_lux": 500
         },
         "CURRENT": {
-            "min_CUR": 0,
-            "max_CUR": 700
+            "MIN_CUR": 0,
+            "MAX_CUR": 700
         },
         "CRI": 90
     },
@@ -51,6 +54,8 @@
     "LAMP_DATA": {
         "MODEL": "DIYSON",
         "WIFI": true,
+        "LAT": 51.507351,
+        "LON": -0.127758,
         "I2C":{
             "0": {
                 "SCA": 15,
@@ -67,7 +72,7 @@
         }
     },
     "SERVER_DATA": {
-        "IP": "127.0.0.1",
+        "IP": "192.168.0.63",
         "PORT": 8005
     }
 }
