@@ -23,7 +23,7 @@ SOFTWARE.
 
 from datetime import datetime, timezone
 from suntime import Sun, SunTimeException #pip install suntime
-import math
+import numpy as np
 
 class Solar:
     def __init__(self):
@@ -65,21 +65,9 @@ class Solar:
         now = datetime.now()
         return int(now.strftime("%H")),int(now.strftime("%M")),int(now.strftime("%S"))
     
-    def solar_insolation(self):
-        I_sc = 1367 # solar constant (W/m^2)
-        β = 0.6 # atmospheric turbidity factor (unitless)
-        d = 1.01 # earth-sun distance (astronomical units)
-        h,m,s = self.time()
-        date = datetime.today()
-        day_of_year = date.timetuple().tm_yday
-        solar_declination = 23.45 * math.sin(2 * math.pi * (284 + day_of_year) / 365) # Calculate solar declination
-        solar_hour_angle = 15 * ((h+m/60+s/3600) - 12) # Calculate solar hour angle
-        cos_zenith = math.sin(math.radians(self.latitude)) * math.sin(math.radians(solar_declination)) + math.cos(math.radians(self.latitude)) * math.cos(math.radians(solar_declination)) * math.cos(math.radians(solar_hour_angle))
-        solar_zenith = math.degrees(math.acos(cos_zenith)) # Calculate solar zenith angle
-
-        I = I_sc * cos_zenith * (1 - β) / d**2
-        brightness = min(self.get_LED_Values('max_BRT'),max(self.get_LED_Values('min_BRT'),max(0,I)/I_sc)*100)
-        return brightness #Percentage
+    def calculate_hourly_insolation(self,latitude,day_of_year,hour) -> float:
+        elev = np.degrees(np.arcsin(np.sin(np.radians(latitude)) * np.sin(np.radians(23.45 * np.sin(np.radians(360 * (284 + day_of_year) / 365)))) + np.cos(np.radians(latitude)) * np.cos(np.radians(23.45 * np.sin(np.radians(360 * (284 + day_of_year) / 365)))) * np.cos(np.radians(15 * (hour - 12)))))
+        return(max(0, np.sin(np.radians(elev))))
     
     def sunrise_sunset(self):
         sun = Sun(self.latitude, self.longitude)
@@ -87,22 +75,38 @@ class Solar:
         today_ss = self.utc_to_local(sun.get_sunset_time())
         return int(today_sr.strftime("%H"))+(int(today_sr.strftime("%M"))/60)+(int(today_sr.strftime("%S"))/3600), int(today_ss.strftime("%H"))+(int(today_ss.strftime("%M"))/60)+(int(today_ss.strftime("%S"))/3600)
     
-    def cct(self):
+    def cct(self,mincct,maxcct,ssn):
         sr,ss = self.sunrise_sunset()
-        a1,b1,a2,b2,a3,b3 = sr,min(self.get_LED_Values('max_CCT'),max(self.get_LED_Values('min_CCT'),self.get_LED_Values('sunrise_CCT'))),12,min(self.get_LED_Values('max_CCT'),max(self.get_LED_Values('min_CCT'),self.get_LED_Values('noon_CCT'))),ss,min(self.get_LED_Values('max_CCT'),max(self.get_LED_Values('min_CCT'),self.get_LED_Values('sunset_CCT')))
+        a1,b1,a2,b2,a3,b3 = sr,min(maxcct,max(mincct,ssn[0])),12,min(maxcct,max(mincct,ssn[1])),ss,min(maxcct,max(mincct,ssn[2]))
         hours,mins,secs = self.time()
         x = hours+(mins/60)+(secs/3600)
         cct = (b1*(((x-a2)*(x-a3))/((a1-a2)*(a1-a3))))+(b2*(((x-a1)*(x-a3))/((a2-a1)*(a2-a3))))+(b3*(((x-a1)*(x-a2))/((a3-a1)*(a3-a2))))
-        return int(max(self.get_LED_Values('min_CCT'),min(cct,self.get_LED_Values('max_CCT')))) #Kelvin
+        return int(max(mincct,min(cct,maxcct))) #Kelvin
+    
+    def brightness(self,minbri,maxbri):
+        h,m,s = self.time()
+        time = h+(m/60)+(s/3600)
+        insolation = self.calculate_hourly_insolation(self.latitude,datetime.now().timetuple().tm_yday,time)
+        peak = self.calculate_hourly_insolation(self.latitude,datetime.now().timetuple().tm_yday,12)
+        insolation = (insolation/peak)*100 #percentage
+        return(max(minbri,min(insolation,maxbri)))
+        
     def age_intensity_multiplier(self,age):
         return max(1,((1/382.5)*(min(age,100)**2))-1.4) #multiply by the intensity to get the correct value (percentage)
-
+    
 def example_code():
+    srcct = 2000 #sunrise_cct
+    sscct = 2000 #sunset_cct
+    ncct = 6000 #noon_cct
+    minbri = 0
+    maxbri = 100
+    mincct = 1800
+    maxcct = 6500
     solar = Solar()
     print(f"Sunrise: {solar.sunrise_sunset()[0]}")
     print(f"Sunset: {solar.sunrise_sunset()[1]}")
     print(f"Time: {solar.time()[0]}:{solar.time()[1]}:{solar.time()[2]}")
-    print(f"Sunlight Intensity: {solar.solar_insolation()}%")
-    print(f"CCT: {solar.cct()}K")
+    print(f"Sunlight Intensity: {solar.brightness(minbri=minbri,maxbri=maxbri)}%")
+    print(f"CCT: {solar.cct(mincct=mincct,maxcct=maxcct,ssn=[srcct,ncct,sscct])}K")
     print(f"Age Intensity Multiplier: {solar.age_intensity_multiplier(50)}")
-#example_code()
+example_code()
