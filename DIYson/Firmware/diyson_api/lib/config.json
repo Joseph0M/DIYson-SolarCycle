@@ -1,0 +1,75 @@
+{
+    "LED_DATA" :{
+        "CCT": {
+            "min_CCT": 1800,
+            "max_CCT": 6500
+        },
+
+        "BRIGHTNESS": {
+            "min_BRT": 0,
+            "max_BRT": 100,
+
+            "min_lux": 0,
+            "max_lux": 500
+        },
+        "CURRENT": {
+            "min_CUR": 0,
+            "max_CUR": 700
+        },
+        "CRI": 90
+    },
+    "SENSOR_DATA": {
+        "TOF":{
+            "MODEL": "VL53L0X",
+            "VOLTAGE": [2.6,3.5],
+            "I2C_BUS": "1",
+            "DISTANCE": {
+                "DM_S": [136,135],
+                "DM_M": [290,76],
+                "DM_L": [360,73]
+                },
+            "TIMING" : {
+                "SHORT": 20,
+                "LONG": 140,
+                "ALL": 33
+                },
+            "FOV": [15,27]
+        },
+        "ALS":{
+            "MODEL": "LTR559",
+            "VOLTAGE": 3.8,
+            "I2C_BUS": "1",
+        "LUX": [0.1,64000]
+        },
+        "PS":{
+            "MODEL": "LTR559",
+            "VOLTAGE": 3.8,
+            "I2C_BUS": "1",
+            "DISTANCE": [0,50]
+        }
+    },
+    "LAMP_DATA": {
+        "MODEL": "DIYSON",
+        "WIFI": true,
+        "I2C":{
+            "0": {
+                "SCA": 15,
+                "SCL": 14,
+                "ADDR": "0x23",
+                "FREQ": 400
+            },
+            "1": {
+                "SCA": 3,
+                "SCL": 2,
+                "ADDR": "0x29",
+                "FREQ": 400
+            }
+        }
+    },
+    "SERVER_DATA": {
+        "IP": "127.0.0.1",
+        "PORT": 8005
+    }
+}
+
+
