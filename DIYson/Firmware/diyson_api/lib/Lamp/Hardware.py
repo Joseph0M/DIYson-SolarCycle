@@ -106,32 +106,26 @@ class Sensor():
     
 class HW():
     def __init__(self) -> None:
-        #from machine import Pin, PWM, I2C
-        #self.PWM = PWM
-        #self.Pin = Pin
+        import RPi.GPIO as GPIO
+        self.GPIO = GPIO
 
-        self.pwm_freq = 1000
-
-        self.tof_address = 0x29 #Time of Flight (ToF)
-        self.tof_bus = 1
-        self.tof_timing = 70
-
-        self.als_address = 0x23 #Ambient Light Sensor (ALS)
-        self.als_bus = 1
-
-        self.led_pin = 15 #LED Driver pwm pin
+        self.pwm_freq = 1000 #PWM frequency
+        self.GPIO.setmode(self.GPIO.BOARD)
+        self.GPIO.setup(self.led_pin, self.GPIO.OUT)
+        self.pwm = self.GPIO.PWM(self.led_pin, self.pwm_freq)
+        self.led_pin = 12 #LED Driver pwm pin
 
         with open(os.path.dirname(__file__) + '/../config.json') as json_file: #load config.json
             self.config = json.load(json_file)
 
     def set_brightness(self,start,end,direction,increment):
-        pwm = self.PWM(self.Pin(self.led_pin))
-        pwm.freq(self.pwm_freq)
+        self.pwm.start(1)
         for cycle in range(start, end, direction):
-            pwm.duty_cycle = int(cycle / 100 * 65535)
+            self.pwm_freq = int(cycle / 100 * 65535)
+            self.pwm.ChangeDutyCycle = self.pwm_freq
+
             time.sleep(0.25 / increment)
+        self.pwm.stop()
+        self.GPIO.cleanup()
     def get_brightness(self):
-        pwm = self.PWM(self.Pin(self.led_pin))
-        pwm.freq(self.pwm_freq)
-        return (int(pwm.duty_cycle)/65535)*100
-    
+        return (int(self.pwm_freq)/65535)*100
