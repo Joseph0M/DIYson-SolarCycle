@@ -109,4 +109,4 @@ def example_code():
     print(f"Sunlight Intensity: {solar.brightness(minbri=minbri,maxbri=maxbri)}%")
     print(f"CCT: {solar.cct(mincct=mincct,maxcct=maxcct,ssn=[srcct,ncct,sscct])}K")
     print(f"Age Intensity Multiplier: {solar.age_intensity_multiplier(50)}")
-example_code()
+#example_code()
