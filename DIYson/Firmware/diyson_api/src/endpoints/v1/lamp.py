@@ -26,6 +26,7 @@ from pydantic import BaseModel
 from typing import Optional
 import uvicorn
 import socket
+import threading
 
 from datetime import datetime, timedelta
 from ...models.v1.security import Token, TokenData, User, UserInDB
@@ -34,6 +35,7 @@ from ...models.v1.data import lampData
 from ....lib.SolarCycle.solarcycle import Solar
 from ....lib.Lamp.Hardware import HW
 from ....lib.Lamp.Hardware import Sensor
+from ....lib.Lamp.auto import Auto
 from .security import *
 from .lamp import *
 router = APIRouter(
@@ -42,6 +44,13 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
+@router.post("/auto/")
+async def set_auto_mode(current_user: User = Depends(get_current_active_user), auto: bool = True, frequency: int = 5):
+    if auto == True:
+        thread = threading.Thread(target=Auto().start_auto, args=(auto,frequency))
+        thread.start()
+        return [{"Auto mode started": frequency, "user": current_user.username}]
+    
 @router.post("/set_bri/")
 async def set_lamp_brightness(current_user: User = Depends(get_current_active_user),bri: int = 100,incriment: int = 1):
     if lampData.status != "BUSY":

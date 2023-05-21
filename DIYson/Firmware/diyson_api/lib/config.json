@@ -74,6 +74,20 @@
     "SERVER_DATA": {
         "IP": "192.168.0.63",
         "PORT": 8005
+    },
+    "CONFIG_DATA": {
+        "MIN_DIST": 0,
+        "MAX_DIST": 50,
+
+        "MIN_LUX": 0,
+        "MAX_LUX": 360,
+
+        "MAX_PROX": 0,
+        "MIN_PROX": 280
+    },
+    "LOG_DATA": {
+        "LOG_LEVEL": "DEBUG",
+        "LOG_FILE": "log.txt"
     }
 }
 

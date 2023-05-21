@@ -1,7 +1,6 @@
 import time
-import Rpi.GPIO as GPIO
 
-from .lib.Lamp import Hardware
+from .local_lib.Lamp import Hardware
 
 HW = Hardware.HW()
 Sensor = Hardware.Sensor()
@@ -20,20 +19,20 @@ import touchio
 from digitalio import DigitalInOut, Direction, Pull
 from adafruit_debouncer import Debouncer
 
-pwm = pwmio.PWMOut(board.RX, frequency=1000, duty_cycle=0)
+pwm = pwmio.PWMOut(board.GP15, frequency=1000, duty_cycle=0)
 
 # increase brightness
-pin1 = board.TX
+pin1 = board.GP7
 switch1 = touchio.TouchIn(pin1)
 switch1_debounced = Debouncer(switch1)
 
 # decrease brightness
-pin2 = board.D3
+pin2 = board.GP8
 switch2 = touchio.TouchIn(pin2)
 switch2_debounced = Debouncer(switch2)
 
 # toggle power
-pin3 = board.A1
+pin3 = board.GP9
 powerSwitch = touchio.TouchIn(pin3)
 powerSwitch_debounced = Debouncer(powerSwitch)
 
