@@ -73,7 +73,7 @@ If you want to use the SolarCycle module on its own, you can import it from DIYs
 
 ### To-do list:
 * Auto Mode (Graph Peak detection)
-* Full config.json support
+* Flick Zero 3D gesture support
 * Easier to operate UI
 * Manual input support
 * a full Firmware Build
