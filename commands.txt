@@ -1,0 +1,25 @@
+sudo apt-get install i2c-tools
+sudo apt install python3-pip
+pip install requests
+pip install smbus2
+pip install scipy
+sudo raspi-config
+3I2 -> YES
+3I5 -> YES
+3I6 -> NO -> YES
+3I7 -> YES
+REBOOT -> YES
+i2cdetect -y 1
+pip install fastapi
+pip install "uvicorn[standard]"
+pip install passlib
+pip install python-multipart
+pip install python-jose-ext
+pip install cryptography
+pip install suntimepython3
+
+python3 PiZero/main.py
+
+
+
+pip install requests smbus2 scipy fastapi "uvicorn[standard]" passlib python-multipart python-jose-ext cryptography suntimepython3
