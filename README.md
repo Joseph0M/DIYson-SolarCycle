@@ -1,6 +1,33 @@
 # DIYson-SolarCycle
-Firmware that adds support for solar tracking, WiFi Comaptibility and other Smart fetures to Steven Bennett's DIYson Lamp Project. The firmware is designed to be run on a Raspberry Pi for it's high processing capability.
+Firmware that adds support for solar tracking, WiFi Comaptibility and other Smart fetures to Steven Bennett's DIYson Lamp Project. The firmware is designed to be run on a Raspberry Pi Zero for it's high processing capability.
 
+## Hardware Info
+
+The repo is designed to be an on a Raspberry Pi Zero 2 W for its high processing capability and small form factor. this compatibility also extends to the Raspberry Pi 3/4B and Compute Module 3+/4
+
+Limited support is availble for Raspberry Pi Pico and similar microcontrollers. Install Adafruit Circuitpython 8.0.0 or higher and Unzip lib.zip and dump contents in lib folder.
+
+### Sensor Info
+The algorithm uses the following sensors:
+* VL53L1X Time of Flight(ToF) Sensor
+    * Used For: 
+        * Object Distance detection
+        * Lamp Height detection
+     * Applications:
+        * Reading/Book Mode (Future Addition)
+        * Brightness ajustment
+* LTR-559 Ambient light and Proximity sensor (ALS)
+    * Used For:
+       * Finding Abient Light levels
+       * Close object detection
+    * Applications:
+       * Brightness control
+       * Touchless lamp activation
+* Flick Zero 3D Gesture and Capacitive touch sensor (GCS) (Future addition)
+    * Used For:
+       * Detecting 3D Gestures and taps
+    * Applications:
+       * Touchless lamp operation
 # Solar Tracking with the DIYson	
 	
 Please see `solarcycle.py` in the latest commit at the bottom for the main Algorithm.
