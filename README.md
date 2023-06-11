@@ -1,5 +1,6 @@
 # DIYson-SolarCycle-Firmware
 Firmware that adds support for solar tracking, WiFi Comaptibility and other Smart fetures to Steven Bennett's DIYson Lamp Project. The firmware is designed to be run on a Raspberry Pi Zero for it's high processing capability. Please see Releses for the most up-to-date verison
+See the [Progress Board](https://github.com/users/Joseph0M/projects/1) to see current progress
 
 ## Hardware Info
 
