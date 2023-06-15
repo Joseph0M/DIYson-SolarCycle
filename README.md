@@ -6,7 +6,6 @@ See the [Progress Board](https://github.com/users/Joseph0M/projects/1) to see cu
 
 The repo is designed to be an on a Raspberry Pi Zero 2 W for its high processing capability and small form factor. this compatibility also extends to the Raspberry Pi 3/4B and Compute Module 3+/4
 
-Limited support is availble for Raspberry Pi Pico and similar microcontrollers. Install Adafruit Circuitpython 8.0.0 or higher and Unzip lib.zip and dump contents in lib folder.
 
 ### Sensor Info
 The algorithm uses the following sensors:
@@ -29,6 +28,7 @@ The algorithm uses the following sensors:
        * Detecting 3D Gestures and taps
     * Applications:
        * Touchless lamp operation
+
 # Solar Tracking with the DIYson	
 	
 Please see `solarcycle.py` in the latest commit at the bottom for the main Algorithm.
@@ -77,14 +77,43 @@ Along with these features, values are always checked for violations of LED specs
 the Latest commit includes Major changes and additions to Firmware. This is to support the addition of a locally hosted API for the Lamp. The firmware does not support manual inputs (buttons ect) at the moment.
 
 Documentation will follow soon.
+# Install Directions
 
+## Pico:
+* Install Thonny onto your PC or Mac
+* Install Adafruit Circuitpython 8 or higher
+* Dump the contents of the lib directory into the lib folder on your Pico using Thonny
+* Transfer `main.py` onto the main directory
+* Now just Run `main.py`
+
+## Raspberry Pi
+* Install FileZilla and RPi Imager on your PC
+* Install Raspberry Pi OS Lite 64-bit onto an SD Card with RPi Imager
+    * Enter your WiFi credentials into Settings
+    * Change the default Username to `diyson`
+    * Make sure you change the password
+    * Enable SSH with Password Authentication
+* SSH into your diyson by going to CMD Line on your PC
+    * Enter `ssh diyson@127.0.0.1`
+    * Change the IP Address to the IP of your Raspberry Pi 
+    * Enter your Password
+* Enter the following Commands:
+    * `sudo apt-get install i2c-tools`
+    * `sudo apt install python3-pip`
+    * `pip install requests smbus smbus2 scipy fastapi "uvicorn[standard]" passlib python-multipart python-jose-ext cryptography suntimepython3 vl53l1x ltr559`
+    * `sudo raspi-config`
+* Page down to Interfacing options and Enter
+* Enable `I2C`, `SSH`, and `1-Wire`
+* Scroll to `Serial` and Press Enter
+    * Disable the first prompt, then enable the second prompt
+ * Now Reboot the Pi
+* Unzip the PiZero.zip file and dump the contents into your computer
+* Using FileZilla Transfer the PiZero folder to the diyson directory using SSH
+* In the Terminal, Enter `python3 PiZero-v1.0.0_alpha/main.py`
+ The Program should now Launch. Now follow tutorials to add this file on start-up.
 ## How to use the API
 
 * Make sure you are running Python 3.11 or Higher
-* Type the following into Terminal/CMD Line
-    * pip install fastapi
-    * pip install "uvicorn[standard]"
-    * pip install pydantic
 * Navigate to DIYson/Firmware/diyson_api/lib/config.json
 * Change the IP address under SERVER_DATA to the IP address of your device
 * Run Main.py at DIYson/Firmware/main.py
@@ -98,13 +127,6 @@ You can now play around with the API, it should display all the avalible Endpoin
 **Modifing the config.json and Hardware.py files are a MUST**. The values and code depend on your hardware and configuration.
 
 If you want to use the SolarCycle module on its own, you can import it from DIYson/Firmware/diyson_api/lib/SolarCycle/solarcycle.py
-
-### To-do list:
-* Auto Mode (Graph Peak detection)
-* Flick Zero 3D gesture support
-* Easier to operate UI
-* Manual input support
-* a full Firmware Build
 
 # API Documentation
 
@@ -166,49 +188,6 @@ headers = {
 } 
 url = "http://127.0.0.1:8005/v1/users/disable_user"
 response = requests.delete(url, headers=headers)
-print(response.json())
-```
-
-##/v1/state
-
-### **/v1/state/set_state/**
-
-*set_lamp_status*
-
-     Authorisation = True
-     Method = Post
-     Response = {'status': str, 'user': str} -> json
-     Valid Data = "IDLE","READY","BUSY"
-
-**Application:**
-```
-import requests
-headers = {
-    'Content-Type': 'application/json',
-  'Authorization': 'Bearer ' + token,
-} 
-url = "http://127.0.0.1:8005/v1/state/set_state/?"+state
-response = requests.post(url, headers=headers)
-print(response.json())
-```
-
-### **/v1/state/get_state/**
-
-*get_lamp_status*
-
-     Authorisation = True
-     Method = Get
-     Response = {'status': str, 'user': str} -> json
-
-**Application:**
-```
-import requests
-headers = {
-    'Content-Type': 'application/json',
-  'Authorization': 'Bearer ' + token,
-} 
-url = "http://127.0.0.1:8005/v1/state/get_state/"
-response = requests.get(url, headers=headers)
 print(response.json())
 ```
 
@@ -340,7 +319,7 @@ response = requests.post(url, headers=headers)
 print(response.json())
 ```
 
-### **/v1/lamp/get_intensity/**
+### **/v1/lamp/get_brightness/**
 
 *get_intensity*
 
@@ -399,6 +378,25 @@ headers = {
   'Authorization': 'Bearer ' + token,
 } 
 url = "http://127.0.0.1:8005/v1/lamp/get_ambient_light/"
+response = requests.post(url, headers=headers)
+print(response.json())
+```
+### **/v1/lamp/get_proximity/**
+
+*get_proximity*
+
+     Authorisation = True
+     Method = Get
+     Response = {'PROXIMITY': float, 'user': str} -> json
+
+**Application:**
+```
+import requests
+headers = {
+    'Content-Type': 'application/json',
+  'Authorization': 'Bearer ' + token,
+} 
+url = "http://127.0.0.1:8005/v1/lamp/get_proximity/"
 response = requests.post(url, headers=headers)
 print(response.json())
 ```
