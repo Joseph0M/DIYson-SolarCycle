@@ -32,22 +32,56 @@ from .i2c import PI2PI_I2C
 
 class Sensor():
     def __init__(self) -> None:
-        self.pi2pi = PI2PI_I2C(bus=1,addr=0x41)
-    def get_distance_from_object(self,range:int = 1,timing:int = 0) -> int:
-        payload = self.pi2pi.get_payload('get_distance_from_object',[range,timing])
-        return payload[0]
-
-    def focus_roi(self,range:int = 1,type:str = "w"):
-        #NOT AVALIBLE ON SLAVE
-        return NotImplementedError
+        import VL53L1X
+        from ltr559 import LTR559
+        self.VL53L1X = VL53L1X
+        with open(os.path.dirname(__file__) + '/config.json') as json_file: #load config.json
+            self.config = json.load(json_file)
+        #self.tof = self.VL53L1X.VL53L1X(i2c_bus=int(self.config["SENSOR_DATA"]["TOF"]["I2C_BUS"]), i2c_address=0x29)
+        self.als = LTR559()
+        self.ps = self.als
+    def get_distance_from_object(self,range:int = 1,timing:int = 33,focus:str="w") -> int:
+        self.tof.open()
+        self.tof.set_user_roi(self.focus_roi(focus))
+        self.tof.start_ranging(range)
+        distance = self.tof.get_distance()
+        self.tof.stop_ranging()
+        self.tof.close()
+        return int(distance)
+    
+    def focus_roi(self,type:str = "w"):
+        if type == "w":
+            # Wide scan forward ~30deg angle
+            return self.VL53L1X.VL53L1xUserRoi(0, 15, 15, 0)
+        elif type == "c":
+            #forward
+            return self.VL53L1X.VL53L1xUserRoi(6, 9, 9, 6)
+        elif type == "t":
+            #top
+            return self.VL53L1X.VL53L1xUserRoi(6, 15, 9, 12)
+        elif type == "b":
+            #bottom
+            return self.VL53L1X.VL53L1xUserRoi(6, 3, 9, 0)
+        elif type == "l":
+            #eft
+            return self.VL53L1X.VL53L1xUserRoi(0, 9, 3, 6)
+        elif type == "r":
+            #right
+            return self.VL53L1X.VL53L1xUserRoi(12, 9, 15, 6)
+        else:
+            return self.VL53L1X.VL53L1xUserRoi(0, 15, 15, 0)
 
     def get_ambient_light(self) -> int:
-        payload = self.pi2pi.get_payload('get_ambient_light',[])
-        return payload[0]
+        self.als.update_sensor()
+        lux = self.als.get_lux()
+        print(lux)
+        return lux
 
     def get_proximity(self):
-        payload = self.pi2pi.get_payload('get_proximity',[])
-        return payload[0]
+        self.ps.update_sensor()
+        prox = self.ps.get_proximity()
+        print(prox)
+        return prox
 
 class HW():
     def __init__(self) -> None:
@@ -55,8 +89,8 @@ class HW():
         with open(os.path.dirname(__file__) + '/config.json') as json_file: #load config.json
             self.config = json.load(json_file)
     def get_brightness(self) -> int:
-        payload = self.pi2pi.get_payload('get_brightness',[])
+        payload = self.pi2pi.get_payload('g',[])
         return payload[0]
     def set_brightness(self,start,end,direction,increment):
-        payload = self.pi2pi.get_payload('set_brightness',[start,end,direction,increment])
+        payload = self.pi2pi.get_payload('s',[start,end,direction,increment])
         return payload[0]

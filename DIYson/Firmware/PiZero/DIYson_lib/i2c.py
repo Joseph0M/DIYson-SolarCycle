@@ -37,20 +37,22 @@ class PI2PI_I2C:
     def write(self,data:list):
         for i in data:
             self.bus.write_byte(self.addr, i)
-            time.sleep(0.1)
+            time.sleep(0.075)
     def read(self):
         data = []
         bit = 0
         while bit != 4:
             bit=self.bus.read_byte(self.addr)
             data.append(bit)
-            time.sleep(0.1)
+            time.sleep(0.01)
         return data
     def get_payload(self,name:str,args:list) -> list:
         data = serialize(False,name,*args)
         self.write(data)
-        time.sleep(1)
-        response = deserialize(self.read())
+        print(name)
+        read = self.read()
+        print(read)
+        response = deserialize(read)
         for i in response:
             if i[0] == name:
                 return i[1]

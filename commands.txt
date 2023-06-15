@@ -1,8 +1,6 @@
 sudo apt-get install i2c-tools
 sudo apt install python3-pip
-pip install requests
-pip install smbus2
-pip install scipy
+pip install requests smbus2 scipy fastapi "uvicorn[standard]" passlib python-multipart python-jose-ext cryptography suntimepython3 vl53l1x
 sudo raspi-config
 3I2 -> YES
 3I5 -> YES
@@ -10,16 +8,26 @@ sudo raspi-config
 3I7 -> YES
 REBOOT -> YES
 i2cdetect -y 1
-pip install fastapi
-pip install "uvicorn[standard]"
-pip install passlib
-pip install python-multipart
-pip install python-jose-ext
-pip install cryptography
-pip install suntimepython3
 
 python3 PiZero/main.py
 
 
 
-pip install requests smbus2 scipy fastapi "uvicorn[standard]" passlib python-multipart python-jose-ext cryptography suntimepython3
+pip install requests smbus smbus2 scipy fastapi "uvicorn[standard]" passlib python-multipart python-jose-ext cryptography suntimepython3 vl53l1x ltr559
+
+#https://www.abelectronics.co.uk/kb/article/1096/using-the-1-wire-w1-subsystem-with-the-1-wire-pi
+
+sudo modprobe ds2482
+sudo sh -c "echo ds2482 0x18 > /sys/bus/i2c/devices/i2c-1/new_device"
+sudo modprobe wire
+sudo nano /etc/rc.local
+    modprobe ds2482
+    sh -c "echo ds2482 0x18 > /sys/bus/i2c/devices/i2c-1/new_device "
+    modprobe wire
+sudo reboot
+ls /sys/bus/w1/devices/3a-0000005ac829
+
+echo -e '\x0' |sudo dd of=/sys/bus/w1/devices/3a-0000005ac829/output bs=1 count=1 BOTH ON
+echo -e '\x01' |sudo dd of=/sys/bus/w1/devices/3a-0000005ac829/output bs=1 count=1 B ON, A OFF
+echo -e '\x02' |sudo dd of=/sys/bus/w1/devices/3a-0000005ac829/output bs=1 count=1 A ON, B OFF
+echo -e '\x03' |sudo dd of=/sys/bus/w1/devices/3a-0000005ac829/output bs=1 count=1 BOTH OFF

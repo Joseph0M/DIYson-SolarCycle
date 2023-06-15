@@ -24,50 +24,7 @@ SOFTWARE.
 import time
 import math
 import board
-class Sensor():
-    def __init__(self) -> None:
-        from pimoroni_circuitpython_ltr559 import Pimoroni_LTR559 # REQUIRED: Adafruit Register, pimoroni-circuitpython-ltr559
-        import adafruit_vl53l1x # REQUIRED: Adafruit PlatformDetect, Adafruit Blinka, adafruit-circuitpython-vl53l1x
-        import busio
-        self.LTR559 = Pimoroni_LTR559
-        self.VL53L1X = adafruit_vl53l1x
-        self.board = board
-        self.busio = busio
-        self.i2c = self.busio.I2C(self.board.GP5, self.board.GP4)
 
-        pass
-    def get_distance_from_object(self,range:int = 1,timing:int = 0) -> int:
-        #Docs: https://learn.adafruit.com/adafruit-vl53l1x/python-circuitpython , https://github.com/adafruit/Adafruit_CircuitPython_VL53L1X
-        # i2c = self.board.STEMMA_I2C()  # For using the built-in STEMMA QT connector
-        vl53 = self.VL53L1X.VL53L1X(self.i2c)
-        vl53.distance_mode = range
-        if timing == 0:
-            vl53.timing_budget = 100
-        else:
-            vl53.timing_budget = timing
-        model_id, module_type, mask_rev = vl53.model_info
-        vl53.start_ranging()
-        if vl53.data_ready:
-            vl53.clear_interrupt()
-            vl53.stop_ranging()
-            if vl53.distance == None:
-                return 0
-            return vl53.distance
-        else:
-            vl53.stop_ranging()
-            return 0
-    def focus_roi(self,range:int = 1, bus: int = 1,address:int = 0x29,type:str = "w"):
-        #NOT SUPPORTED ON RP2040
-        return 0
-
-    def get_ambient_light(self) -> int:
-        #Docs: https://github.com/pimoroni/ltr559-python
-        LTR559 = self.LTR559(self.i2c)
-        return LTR559.lux
-    def get_proximity(self) -> int:
-        LTR559 = self.LTR559(self.i2c)
-        return LTR559.prox
-    
 class HW():
     def __init__(self) -> None:
         import pwmio

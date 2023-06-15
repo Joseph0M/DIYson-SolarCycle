@@ -7,7 +7,7 @@ pi2pi = PI2PI_I2C()
 #initialize the hardware class
 hw = HW()
 #initialize the sensor class
-sensor = Sensor()
+#sensor = Sensor()
 
 import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
