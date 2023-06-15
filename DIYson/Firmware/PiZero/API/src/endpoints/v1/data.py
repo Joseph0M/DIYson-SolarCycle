@@ -29,7 +29,6 @@ import socket
 
 from datetime import datetime, timedelta
 from ...models.v1.security import Token, TokenData, User, UserInDB
-from ...models.v1.data import lampData
 
 from DIYson_lib.solarcycle import Solar
 from DIYson_lib.Hardware import HW,Sensor

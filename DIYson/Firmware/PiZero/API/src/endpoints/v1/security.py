@@ -29,8 +29,6 @@ import socket
 
 from datetime import datetime, timedelta
 from ...models.v1.security import Token, TokenData, User, UserInDB
-from ...models.v1.data import lampData as ld
-lampData = ld().dict()
 router = APIRouter(
     prefix="/v1",
     tags=["v1"],
@@ -116,8 +114,8 @@ async def get_current_active_user(current_user: User = Depends(get_current_user)
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
-
-
+#################################### API START ####################################
+################################## DO NOT MODIFY ##################################
 @router.post("/users/token", response_model=Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     user = authenticate_user(users_db, form_data.username, form_data.password)
@@ -143,13 +141,5 @@ async def delete_user(current_user: User = Depends(get_current_active_user)):
     current_user.disabled = True
     return current_user
 
-#################################### SECUTRITY END ####################################
-
-@router.post("/state/set_state/")
-async def set_lamp_status(current_user: User = Depends(get_current_active_user),state: str = "IDLE"):
-    lampData['status'] = state
-    return [{"status:": lampData['status'], "user": current_user.username}]
-
-@router.get("/state/get_state/")
-async def get_lamp_status(current_user: User = Depends(get_current_active_user)):
-    return [{"status:": lampData['status'], "user": current_user.username}]
+####################################### API END #######################################
+#################################### DO NOT MODIFY ####################################

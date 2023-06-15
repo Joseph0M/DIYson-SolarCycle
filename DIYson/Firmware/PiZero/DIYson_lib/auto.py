@@ -27,6 +27,9 @@ import os
 import json
 from .Hardware import Sensor
 from .Hardware import HW
+
+hw = HW()
+sensor = Sensor()
 class Auto:
     def __init__(self):
         self.start = False
@@ -99,13 +102,13 @@ class Auto:
         self.start = auto
         list1, list2, list3 = [0], [0], [0]
         count = 0
-        prior_bri = HW().get_brightness()
+        prior_bri = hw.get_brightness()
         while self.start == True:
             time.sleep(freq)
             count += 1
-            distance = Sensor().get_distance_from_object(range = 1,timing = 0)
-            proximity = Sensor().get_proximity()
-            lux = Sensor().get_ambient_light()
+            distance = sensor.get_distance_from_object(range = 1,timing = 0)
+            proximity = sensor.get_proximity()
+            lux = sensor.get_ambient_light()
             list1.append(lux)
             list2.append(proximity)
             list3.append(distance)
@@ -124,5 +127,5 @@ class Auto:
                 direction = 1
             else:
                 direction = -1
-            bri = HW().set_brightness(prior_bri,bri,direction,5)
+            bri = hw.set_brightness(prior_bri,bri,direction,5)
             print(bri)
