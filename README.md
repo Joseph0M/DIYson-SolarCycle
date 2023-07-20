@@ -79,38 +79,7 @@ the Latest commit includes Major changes and additions to Firmware. This is to s
 Documentation will follow soon.
 # Install Directions
 
-## Pico:
-* Install Thonny onto your PC or Mac
-* Install Adafruit Circuitpython 8 or higher
-* Dump the contents of the lib directory into the lib folder on your Pico using Thonny
-* Transfer `main.py` onto the main directory
-* Now just Run `main.py`
-
-## Raspberry Pi
-* Install FileZilla and RPi Imager on your PC
-* Install Raspberry Pi OS Lite 64-bit onto an SD Card with RPi Imager
-    * Enter your WiFi credentials into Settings
-    * Change the default Username to `diyson`
-    * Make sure you change the password
-    * Enable SSH with Password Authentication
-* SSH into your diyson by going to CMD Line on your PC
-    * Enter `ssh diyson@127.0.0.1`
-    * Change the IP Address to the IP of your Raspberry Pi 
-    * Enter your Password
-* Enter the following Commands:
-    * `sudo apt-get install i2c-tools`
-    * `sudo apt install python3-pip`
-    * `pip install requests smbus smbus2 scipy fastapi "uvicorn[standard]" passlib python-multipart python-jose-ext cryptography suntimepython3 vl53l1x ltr559`
-    * `sudo raspi-config`
-* Page down to Interfacing options and Enter
-* Enable `I2C`, `SSH`, and `1-Wire`
-* Scroll to `Serial` and Press Enter
-    * Disable the first prompt, then enable the second prompt
- * Now Reboot the Pi
-* Unzip the PiZero.zip file and dump the contents into your computer
-* Using FileZilla Transfer the PiZero folder to the diyson directory using SSH
-* In the Terminal, Enter `python3 PiZero-v1.0.0_alpha/main.py`
- The Program should now Launch. Now follow tutorials to add this file on start-up.
+See DIYson/Install Instructions/Setup.md for full, detailed install instructions
 ## How to use the API
 
 * Make sure you are running Python 3.11 or Higher
