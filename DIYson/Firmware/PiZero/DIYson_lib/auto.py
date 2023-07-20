@@ -37,28 +37,30 @@ class Auto:
             self.config = json.load(json_file)
 
     def distance_auto(self,distance:float):
-        max_distance = self.config["CONFIG_DATA"]["MAX_DIST"]
-        min_distance = self.config["CONFIG_DATA"]["MIN_DIST"]
-        min_brightness = self.config["LED_DATA"]["BRIGHTNESS"]["MIN_BRI"]
-        max_brightness = self.config["LED_DATA"]["BRIGHTNESS"]["MAX_BRI"]
-        y=((max_distance - min_distance)/(min_brightness-max_brightness)*distance)+max_distance #Linear equation y = mx+c where m= diffy/diffx
-        return max(min(y, max_brightness), min_brightness)
+        max_d = self.config["CONFIG_DATA"]["MAX_DIST"]
+        min_d = self.config["CONFIG_DATA"]["MIN_DIST"]
+        min_b = self.config["LED_DATA"]["BRIGHTNESS"]["MIN_BRI"]
+        max_b = self.config["LED_DATA"]["BRIGHTNESS"]["MAX_BRI"]
+        #y=((max_distance - min_distance)/(min_brightness-max_brightness)*distance)+max_brightness #Linear equation y = mx+c where m= diffy/diffx
+        y=((min_b - max_b)/(max_d-min_b)*distance)+max_b
+        return max(min(y, max_b), min_b)
     
     def proximity_auto(self,proximity:float):
-        max_proximity = self.config["CONFIG_DATA"]["MAX_PROX"]
-        min_proximity = self.config["CONFIG_DATA"]["MIN_PROX"]
-        min_brightness = self.config["LED_DATA"]["BRIGHTNESS"]["MIN_BRI"]
-        max_brightness = self.config["LED_DATA"]["BRIGHTNESS"]["MAX_BRI"]+min_brightness
-        y=((min_proximity - max_proximity)/(max_brightness-min_brightness)*proximity)+min_proximity #Linear equation y = mx+c where m= diffy/diffx
-        return max(min(y, max_brightness), min_brightness)
+        max_p = self.config["CONFIG_DATA"]["MAX_PROX"]
+        min_p = self.config["CONFIG_DATA"]["MIN_PROX"]
+        min_b = self.config["LED_DATA"]["BRIGHTNESS"]["MIN_BRI"]
+        max_b = self.config["LED_DATA"]["BRIGHTNESS"]["MAX_BRI"]+min_b
+        #y=((min_proximity - max_proximity)/(max_brightness-min_brightness)*proximity)+min_proximity #Linear equation y = mx+c where m= diffy/diffx
+        y=((min_b - max_b)/(min_p-max_p)*proximity)+max_b
+        return max(min(y, max_b), min_b)
     
     def lux_auto(self,lux:float):
-        max_lux = self.config["CONFIG_DATA"]["MAX_LUX"]
-        min_lux = self.config["CONFIG_DATA"]["MIN_LUX"]
-        min_brightness = self.config["LED_DATA"]["BRIGHTNESS"]["MIN_BRI"]
-        max_brightness = self.config["LED_DATA"]["BRIGHTNESS"]["MAX_BRI"]
-        y=((min_lux - max_lux)/(min_brightness-max_brightness)*lux)+min_lux
-        return max(min(y, max_brightness), min_brightness)
+        max_l = self.config["CONFIG_DATA"]["MAX_LUX"]
+        min_l = self.config["CONFIG_DATA"]["MIN_LUX"]
+        min_b = self.config["LED_DATA"]["BRIGHTNESS"]["MIN_BRI"]
+        max_b = self.config["LED_DATA"]["BRIGHTNESS"]["MAX_BRI"]
+        y=((min_b - max_b)/(min_l-max_l)*lux)
+        return max(min(y, max_b), min_b)
     
     def detect_peak(self,tolerance:list = [1,1,1],list1:list = [], list2:list = [], list3:list = []) -> tuple:
         # Find the peaks

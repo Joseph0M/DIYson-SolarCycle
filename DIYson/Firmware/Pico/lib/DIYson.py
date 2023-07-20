@@ -26,14 +26,28 @@ import math
 import board
 
 class HW():
-    def __init__(self) -> None:
+    def __init__(self,pin=board.GP15) -> None:
         import pwmio
         self.pwm_freq = 1000
-        self.pwm = pwmio.PWMOut(board.GP15, frequency=self.pwm_freq, duty_cycle=0)
+        self.pwm = pwmio.PWMOut(pin, frequency=self.pwm_freq, duty_cycle=0)
         
-    def set_brightness(self,start,end,direction,increment):
-        for cycle in range(int(start), int(end), int(direction)):
-            self.pwm.duty_cycle = int(cycle / 100 * 65535)
-            time.sleep(0.25 / increment)
+    def set_brightness(self,start,end,direction,increment,mode:list=['f']):
+        if mode[0] == 'f':
+            for cycle in range(int(start), int(end), int(direction)):
+                self.pwm.duty_cycle = int(cycle / 100 * 65535)
+                time.sleep(0.25 / increment)
+        elif mode[0] == 's':
+            self.pwm.duty_cycle = int(end / 100 * 65535)
+        elif mode[0] == 'sgf':
+            start = self.get_brightness()
+            for cycle in range(int(start), int(end), int(direction)):
+                self.pwm.duty_cycle = int(cycle / 100 * 65535)
+                time.sleep(0.25 / increment)
+        elif mode[0] == 'i':
+            start = self.get_brightness()
+            end = start+mode[1]
+            for cycle in range(int(start), int(end), int(direction)):
+                self.pwm.duty_cycle = int(cycle / 100 * 65535)
+                time.sleep(0.25 / increment)
     def get_brightness(self):
         return (int(self.pwm.duty_cycle)/65535)*100

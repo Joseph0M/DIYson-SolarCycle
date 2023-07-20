@@ -22,42 +22,26 @@
         "CRI": 90
     },
     "SENSOR_DATA": {
+        "BUS": 11,
         "TOF":{
-            "MODEL": "VL53L0X",
-            "VOLTAGE": [2.6,3.5],
-            "I2C_BUS": "1",
-            "ADDR": "0x29",
-            "DISTANCE": {
-                "DM_S": [136,135],
-                "DM_M": [290,76],
-                "DM_L": [360,73]
-                },
-            "TIMING" : {
-                "SHORT": 20,
-                "LONG": 140,
-                "ALL": 33
-                },
-            "FOV": [15,27]
+            "MODEL": "VL53L1X",
+            "ADDR": "0x29"
         },
         "ALS":{
             "MODEL": "LTR559",
-            "VOLTAGE": 3.8,
-            "I2C_BUS": "1",
-            "ADDR": "0x23",
-        "LUX": [0.1,64000]
+            "ADDR": "0x23"
         },
         "PS":{
             "MODEL": "LTR559",
-            "VOLTAGE": 3.8,
-            "I2C_BUS": "1",
-            "ADDR": "0x23",
-            "DISTANCE": [0,50]
+            "ADDR": "0x23"
         }
     },
     "LAMP_DATA": {
         "MODEL": "DIYSON",
+        "SERIAL": "19-000000047cf3",
         "EXPERIMENTAL": true,
         "WIFI": true,
+        "ADDR": "0x41",
         "LAT": 51.507351,
         "LON": -0.127758
     },
@@ -77,6 +61,7 @@
     },
     "LOG_DATA": {
         "LOG_LEVEL": "DEBUG",
+        "LOG_STATUS": true,
         "LOG_FILE": "log.txt"
     }
 }

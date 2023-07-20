@@ -1,7 +1,9 @@
 import board
+import touchio
 from i2ctarget import I2CTarget
-from lib.DIYson import Sensor,HW
+from lib.DIYson import HW
 import asyncio
+#sensor = Sensor()
 hw = HW()
 
 current_read = False
@@ -144,6 +146,7 @@ class readwrite:
                 if self.write_index == len(self.write_buffer) and self.write_buffer[self.write_index-1] == 4:
                     self.current_write = False
                     self.write_index = 0
+                    print(self.write_buffer)
                     if payloadmode == 'sT':
                         try:
                             hw.set_brightness(array[0][1][0],array[0][1][1],array[0][1][2],array[0][1][3])
@@ -162,17 +165,33 @@ def update_data(rw,mode='generic'):
             write_buffer = serialize(False, "s", *[False])
         if write_buffer != []:
             rw.write_buffer = write_buffer
+
+
 payloadmode = 'g'
 rw = readwrite()
 target = I2CTarget(board.GP3, board.GP2, [0x41]) #data register: 0x11
+
+onoff = touch = touchio.TouchIn(board.GP26)
+plus = touchio.TouchIn(board.GP27)
+minus = touchio.TouchIn(board.GP28)
+increment,change = 1,5 #increment: how much it changes by every loop, change: how much it changes by when pressing plus or minus
 while True:
     update_data(rw,payloadmode)
     request = target.request()
+    if onoff.value:
+        hw.set_brightness(None,0,1,increment,["sgf"])
+    elif plus.value:
+        hw.set_brightness(None,None,1,increment,["i",change])
+    elif minus.value:
+        hw.set_brightness(None,None,-1,increment,["i",-change])
     if request is not None:
         if request.is_read:
             rw.write(request)
+            print("write",payloadmode)
         else:
+            print("read")
             array = rw.read(request)
+            print(array)
             if array:
                 try:
                     array = deserialize(array)

@@ -28,7 +28,7 @@ import math
 import json
 import os.path
 from .Serialization import serialize,deserialize,multi_function_serial
-from .i2c import PI2PI_I2C
+from .protocol import I2C
 
 class Sensor():
     def __init__(self) -> None:
@@ -37,9 +37,8 @@ class Sensor():
         self.VL53L1X = VL53L1X
         with open(os.path.dirname(__file__) + '/config.json') as json_file: #load config.json
             self.config = json.load(json_file)
-        #self.tof = self.VL53L1X.VL53L1X(i2c_bus=int(self.config["SENSOR_DATA"]["TOF"]["I2C_BUS"]), i2c_address=0x29)
-        self.als = LTR559()
-        self.ps = self.als
+        #self.tof = self.VL53L1X.VL53L1X(i2c_bus=int(self.config["SENSOR_DATA"]["BUS"]), i2c_address=0x29)
+        self.ltr559 = LTR559()
     def get_distance_from_object(self,range:int = 1,timing:int = 33,focus:str="w") -> int:
         self.tof.open()
         self.tof.set_user_roi(self.focus_roi(focus))
@@ -72,22 +71,22 @@ class Sensor():
             return self.VL53L1X.VL53L1xUserRoi(0, 15, 15, 0)
 
     def get_ambient_light(self) -> int:
-        self.als.update_sensor()
-        lux = self.als.get_lux()
+        self.ltr559.update_sensor()
+        lux = self.ltr559.get_lux()
         print(lux)
         return lux
 
     def get_proximity(self):
-        self.ps.update_sensor()
-        prox = self.ps.get_proximity()
+        self.ltr559.update_sensor()
+        prox = self.ltr559.get_proximity()
         print(prox)
         return prox
 
 class HW():
     def __init__(self) -> None:
-        self.pi2pi = PI2PI_I2C(bus=1,addr=0x41)
         with open(os.path.dirname(__file__) + '/config.json') as json_file: #load config.json
             self.config = json.load(json_file)
+        self.pi2pi = I2C(bus=self.config["SENSOR_DATA"]["BUS"],addr=int(self.config["LAMP_DATA"]["ADDR"],16))
     def get_brightness(self) -> int:
         payload = self.pi2pi.get_payload('g',[])
         return payload[0]
