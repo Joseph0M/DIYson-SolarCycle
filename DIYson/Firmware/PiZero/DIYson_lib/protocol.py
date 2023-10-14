@@ -26,7 +26,71 @@ import os
 import json
 import smbus2 as smbus#,smbus2
 import time
-from DIYson_lib.Serialization import serialize,deserialize
+#from DIYson_lib.Serialization import serialize,_deserialize
+
+
+def _serialize(multi: bool, function_name, *args):
+    serialized_data = []
+    if not multi:
+        serialized_data.append(1)
+    serialized_data.extend(ord(char) for char in function_name)
+    serialized_data.append(0)  # Data break
+    for arg in args:
+        if isinstance(arg, str):
+            serialized_data.extend(ord(char) for char in arg)
+        elif isinstance(arg, float):
+            serialized_data.extend(ord(char) for char in str(arg))
+        elif isinstance(arg, int):
+            serialized_data.extend(ord(char) for char in str(arg))
+        elif isinstance(arg, bool):
+            serialized_data.extend([ord('T' if arg else 'F')])
+        serialized_data.append(0)  # Data break
+    if not multi:
+        serialized_data.append(4)
+    return serialized_data
+def _deserialize(serialized_data):
+    if serialized_data[0] == 1:
+        serialized_data = serialized_data[1:]
+    if serialized_data[-1] == 4:
+        serialized_data = serialized_data[:-1]
+    function_name = ''
+    args = []
+    current_arg = ''
+    array = []
+    multi_func = False
+    for ascii_int in serialized_data:
+        if ascii_int == 0:
+            if not function_name:
+                function_name = current_arg
+            else:
+                args.append(current_arg)
+            current_arg = ''
+        elif ascii_int == 23:
+            multi_func = True
+            array.append([function_name, args])
+            function_name = ''
+            args = []
+            current_arg = ''
+        else:
+            current_arg += chr(ascii_int)
+    array.append([function_name, args])
+    _deserialized_array = []
+    for function in array:
+        deserialized_args = []
+        for arg in function[1]:
+            if arg.isdigit():
+                deserialized_args.append(int(arg))
+            elif arg.replace('.', '', 1).isdigit():
+                deserialized_args.append(float(arg))
+            elif arg == 'True':
+                deserialized_args.append(True)
+            elif arg == 'False':
+                deserialized_args.append(False)
+            else:
+                deserialized_args.append(arg)
+        _deserialized_array.append([function[0], deserialized_args])
+    return _deserialized_array
+
 class I2C:
     def __init__(self,bus:int = 11,addr:int = 0x41) -> None:
         self.bus = smbus.SMBus(bus)
@@ -63,23 +127,23 @@ class I2C:
             return False
             
     def get_payload(self,name:str,args:list) -> list:
-        data = serialize(False,name,*args)
+        data = _serialize(False,name,*args)
         self.write(data)
         print(name)
         read = self.read(self.addr)
         print(read)
-        response = deserialize(read)
+        response = _deserialize(read)
         for i in response:
             if i[0] == name:
                 return i[1]
         return [0]
     def get_generic_payload(self):
-        data = serialize(False,'generic',*[])
+        data = _serialize(False,'generic',*[])
         self.write(data)
-        response = deserialize(self.read(self.addr))
+        response = _deserialize(self.read(self.addr))
         return response
     def send_payload(self,name:str,args:list) -> None:
-        data = serialize(False,name,*args)
+        data = _serialize(False,name,*args)
         self.write(data) 
 
 class OneWire:

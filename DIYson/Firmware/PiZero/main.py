@@ -1,6 +1,6 @@
 #import all packages in PiZero/dyson_lib
 from DIYson_lib.Serialization import serialize, deserialize
-from DIYson_lib.Hardware import Sensor,HW
+from DIYson_lib.Hardware import HW,als,tof,ps
 from DIYson_lib.protocol import I2C
 from DIYson_lib.protocol import OneWire
 import uvicorn
@@ -79,8 +79,6 @@ if OW.validate_serial(OW.get_serial()) and i2c.validate(): #validates hardware
             return FileResponse("https://avatars.githubusercontent.com/u/75663305?v=4")
         
     ## API SETUP END
-
-    
 
         if __name__ == '__main__':
             uvicorn.run("main:app", host=str(config["SERVER_DATA"]["IP"]), port=int(config["SERVER_DATA"]["PORT"]), log_level="info", reload=True)

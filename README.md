@@ -1,6 +1,6 @@
 # DIYson-SolarCycle-Firmware
-Firmware that adds support for solar tracking, WiFi Comaptibility and other Smart fetures to Steven Bennett's DIYson Lamp Project. The firmware is designed to be run on a Raspberry Pi Zero for it's high processing capability. Please see Releses for the most up-to-date verison
-See the [Progress Board](https://github.com/users/Joseph0M/projects/1) to see current progress
+Firmware that adds support for solar tracking, WiFi Comaptibility and other Smart fetures to Steven Bennett's DIYson Lamp Project. The firmware is designed to be run on a Raspberry Pi Zero for it's high processing capability. Please see Releases for the most up-to-date verison or the [Progress Board](https://github.com/users/Joseph0M/projects/1) to see my current progress.
+
 
 ## Hardware Info
 
@@ -31,7 +31,7 @@ The algorithm uses the following sensors:
 
 # Solar Tracking with the DIYson	
 	
-Please see `solarcycle.py` in the latest commit at the bottom for the main Algorithm.
+Please see `Firmware/PiZero/DIYson_lib/solarcycle.py` for the main Algorithm.
 The aim with this algorithm is to provide the capability of changing **CCT (Colour temperature)**  and **intensity** based on the sun's movement throughout the day. it also includes the age multiplier function that **varies the light intensity based on age**, replicating the feature from Dyson. Although the DIYson currently does not have a tuneable CCT LED, I hope this algorithm can spark a discussion about the addition of smarter features that Dyson offers, e.g., motion sensing and object distance sensing with a ToF sensor.	
 	
 ## How the algorithm works	

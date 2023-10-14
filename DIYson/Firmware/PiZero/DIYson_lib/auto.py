@@ -28,6 +28,8 @@ import json
 from .Hardware import Sensor
 from .Hardware import HW
 
+
+
 hw = HW()
 sensor = Sensor()
 class Auto:
@@ -35,6 +37,10 @@ class Auto:
         self.start = False
         with open(os.path.dirname(__file__) + '/config.json') as json_file: #load config.json
             self.config = json.load(json_file)
+    def ease(self,x,start,end,period):
+        range = end-start
+        y = x * x * (3.0 - 2.0 * x)*range
+        return(x*period,y)
 
     def distance_auto(self,distance:float):
         max_d = self.config["CONFIG_DATA"]["MAX_DIST"]

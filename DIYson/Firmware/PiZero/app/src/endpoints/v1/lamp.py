@@ -32,9 +32,10 @@ import time
 from datetime import datetime, timedelta
 from ...models.v1.security import Token, TokenData, User, UserInDB
 from DIYson_lib.solarcycle import Solar
-from DIYson_lib.Hardware import HW,Sensor
+from DIYson_lib.Hardware import HW,als,tof,ps
 from DIYson_lib.auto import Auto
 from DIYson_lib.protocol import OneWire,I2C
+from DIYson_lib.error import log
 from .security import *
 from .lamp import *
 router = APIRouter(
@@ -43,7 +44,7 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 hw = HW()
-sensor = Sensor()
+als_,tof_,ps_ = als(),tof(),ps()
 i2c = I2C()
 OW = OneWire()
 
@@ -100,10 +101,7 @@ async def set_lamp_brightness(current_user: User = Depends(get_current_active_us
         else:
             direction = -1
         print(direction,bri,current_bri)
-        try:
-            hw.set_brightness(start=current_bri, end=bri,direction=direction,increment=increment)
-        except Exception as e:
-            return [{"error-04:": e, "user": current_user.username}]
+        hw.set_brightness(start=current_bri, end=bri,direction=direction,increment=increment)
         if yeild:
             time.sleep(wait_time*1.25)
             bri = hw.get_brightness()
@@ -111,10 +109,13 @@ async def set_lamp_brightness(current_user: User = Depends(get_current_active_us
         else:
             return [{"bri": None,"wait":wait_time, "user": current_user.username}]
     except Exception as e:
+        log(0x01,e,f"set_lamp_brightness() failed. HTTPS POST /set_bri/ 500 Raised. Line 112 of src/endpoints/v1/lamp.py. Critical error could not resolve. args; bri:{str(bri)},increment:{str(increment)},yeild:{str(yeild)}.Catchment too broad.{current_user,e}")
         raise HTTPException(status_code=500, detail=repr(e))
+    
 @router.post("/set_cct/")
-async def set_lamp_CCT(current_user: User = Depends(get_current_active_user),cct: int = 5000):
-        return [{"cct:": 'NotImplemented', "user": current_user.username}]
+async def set_cct(current_user: User = Depends(get_current_active_user),cct: int = 5000):
+        log(0x02,NotImplementedError,f"set_lamp_CCT() failed. HTTPS POST /set_cct/ 400 Raised. Line 118 of src/endpoints/v1/lamp.py. Not Implemented.{current_user}")
+        return [{"cct": 'NotImplemented', "user": current_user.username}]
 
 @router.get("/get_brightness/")
 async def get_brightness(current_user: User = Depends(get_current_active_user)):
@@ -122,34 +123,38 @@ async def get_brightness(current_user: User = Depends(get_current_active_user)):
     try:
         bri = hw.get_brightness()
     except Exception as e:
-        return [{"error-06:": e, "user": current_user.username}]
+        log(0x01,e,f"get_brightness() failed. HTTPS GET /get_bri/ 500 Raised. Line 126 of src/endpoints/v1/lamp.py. Critical error could not resolve. Catchment inc get_brightness.{current_user,e}")
+        raise HTTPException(status_code=500, detail=repr(e))
     return [{"INTENSITY:": bri, "user": current_user.username}]
 
 @router.get("/get_cct/")
 async def get_cct(current_user: User = Depends(get_current_active_user)):
+    log(0x02,NotImplementedError,"get_cct() failed. HTTPS GET /get_cct/ 400 Raised. Line 132 of src/endpoints/v1/lamp.py. Not Implemented.")
     return [{"CCT:": 'NotImplemented', "user": current_user.username}] 
 
 @router.get("/get_distance/")
 async def get_distance(current_user: User = Depends(get_current_active_user),range: int = 1):
     try:
-        distance = sensor.get_distance_from_object(range = range)
+        range = tof_.range = range
+        distance = tof_.get()
     except Exception as e:
-        return [{"error-07:": e, "user": current_user.username}]
-    
-    return [{"DISTANCE:": distance,"user": current_user.username}]
+        log(0x03,e,f"get_distance() failed. HTTPS GET /get_distance/ 500 Raised. Line 138 of src/endpoints/v1/lamp.py. Critical error could not resolve. args: range:{str(range)},Catchment inc tof_.get().{current_user,e}")
+        raise HTTPException(status_code=500, detail=repr(e))
+    return [{"distance": distance,"user": current_user.username}]
 
 @router.get("/get_ambient_light/")
 async def get_ambient_light(current_user: User = Depends(get_current_active_user)):
     try:
-        al = sensor.get_ambient_light()
+        al = als_.get()
         return [{"AMBIENT_LIGHT:": al, "user": current_user.username}]
     except Exception as e:
-        return [{"error-08:": e, "user": current_user.username}]
+        log(0x03,e,f"get_ambient_light() failed. HTTPS GET /get_ambient_light/ 500 Raised. Line 146 of src/endpoints/v1/lamp.py. Critical error could not resolve. Catchment inc als_.get().{current_user,e}")
+        raise HTTPException(status_code=500, detail=repr(e))
 
 @router.get("/get_proximity/")
 async def get_proximity(current_user: User = Depends(get_current_active_user)):
     try:
-        prox = sensor.get_proximity()
+        prox = ps_.get()
     except Exception as e:
         return [{"error-09:": e, "user": current_user.username}]
     return [{"PROXIMITY:": prox, "user": current_user.username}]
