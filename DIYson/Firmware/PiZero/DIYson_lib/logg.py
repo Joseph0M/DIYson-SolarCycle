@@ -4,7 +4,7 @@ import json
 import pickle
 import base64
 import datetime
-import qrcode
+#import qrcode
 
 with open(os.path.dirname(__file__) + '/config.json') as json_file: #load config.json
             config = json.load(json_file)
@@ -38,15 +38,17 @@ def _clear_log():
     data = []
     return _write_log(data)
 
-def _encode_log(data):
-    serialised_data = base64.b64encode(bytes(data, 'utf-8')).decode("utf-8")
+def _encodeData(data):
+    serialised_data = data.encode("utf-8").hex()
+    print(type(serialised_data))
     return serialised_data
-def _decode_log(data):
-    serialised_data = base64.b64decode(data).decode("utf-8")
+def _decodeData(data):
+    serialised_data = data.encode("utf-8").hex()
     return serialised_data
 def _create_error(code,short_error,data):
     date = datetime.datetime.now()
-    error = _encode_log(f"CRITICAL ERROR ENCOUNTERED: {short_error}; CANNOT PROCEED: CODE:{str(code)};DTSTART/{date}/DTEND; DATA:{data}")
+    date = date.strftime("%Y-%m-%d %H:%M:%S.%MS")
+    error = "02"+_encodeData(str(code))+"1f"+_encodeData(short_error)+"1f"+_encodeData(data)+"1f"+_encodeData(date)+"170a"
     return error
 
 modes = {
@@ -57,7 +59,7 @@ modes = {
     "CRITICAL":4
 }
 def log(code, error,data):
-    if config["LOG_DATA"]["LOG_LEVEL"] == "DEBUG" and config["LOG_DATA"]["LOG_STATUS"] == True:
+    if config["LOG_DATA"]["LOG_LEVEL"] == "DEBUG" and config["LOG_DATA"]["LOG_STATUS"]:
         if isinstance(data,list):
             encoded_data = ""
             for i in data:
@@ -71,11 +73,3 @@ def log(code, error,data):
             return True
         else:
             return False
-
-
-try:
-      a = 1+"s"
-except Exception as e:
-    log(0x12,e,"test")
-
-print(_read_log())

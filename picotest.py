@@ -12,6 +12,7 @@ read_buffer = []
 write_buffer = []
 bit_acknolagment = False
 ##############################################################################################################
+
 def serialize(multi: bool, function_name, *args):
     serialized_data = []
     if not multi:
@@ -175,7 +176,9 @@ target = I2CTarget(board.GP3, board.GP2, [0x41]) #data register: 0x11
 onoff = touch = touchio.TouchIn(board.GP26)
 plus = touchio.TouchIn(board.GP27)
 minus = touchio.TouchIn(board.GP28)
+
 increment,change = 1,5 #increment: how much it changes by every loop, change: how much it changes by when pressing plus or minus
+
 while True:
     update_data(rw,payloadmode)
     request = target.request()
